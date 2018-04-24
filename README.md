@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Keras RetinaNet [![Build Status](https://travis-ci.org/fizyr/keras-retinanet.svg?branch=master)](https://travis-ci.org/fizyr/keras-retinanet) [![DOI](https://zenodo.org/badge/100249425.svg)](https://zenodo.org/badge/latestdoi/100249425)
 
 Keras implementation of RetinaNet object detection as described in [Focal Loss for Dense Object Detection](https://arxiv.org/abs/1708.02002)
@@ -234,3 +235,6 @@ Contributions to this project are welcome.
 
 ### Discussions
 Feel free to join the `#keras-retinanet` [Keras Slack](https://keras-slack-autojoin.herokuapp.com/) channel for discussions and questions.
+=======
+#keras-retinanet
+>>>>>>> 68e3bcd9ce1e8a0f2bbb0a7b7a1cc3c25c35ffac
