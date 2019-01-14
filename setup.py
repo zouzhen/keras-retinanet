@@ -1,27 +1,3 @@
-<<<<<<< HEAD
-import setuptools
-
-setuptools.setup(
-    name='keras-retinanet',
-    version='0.0.1',
-    url='https://github.com/fizyr/keras-retinanet',
-    author='Hans Gaiser',
-    author_email='h.gaiser@fizyr.com',
-    maintainer='Hans Gaiser',
-    maintainer_email='h.gaiser@fizyr.com',
-    packages=setuptools.find_packages(),
-    install_requires=['keras', 'keras-resnet', 'six', 'scipy'],
-    entry_points = {
-        'console_scripts': [
-            'retinanet-train=keras_retinanet.bin.train:main',
-            'retinanet-evaluate-coco=keras_retinanet.bin.evaluate_coco:main',
-            'retinanet-evaluate=keras_retinanet.bin.evaluate:main',
-            'retinanet-debug=keras_retinanet.bin.debug:main',
-            'retinanet-convert-model=keras_retinanet.bin.convert_model:main',
-        ],
-    }
-)
-=======
 import setuptools
 from setuptools.extension import Extension
 from distutils.command.build_ext import build_ext as DistUtilsBuildExt
@@ -89,4 +65,3 @@ setuptools.setup(
     ext_modules    = extensions,
     setup_requires = ["cython>=0.28", "numpy>=1.14.0"]
 )
->>>>>>> a619206a23c9b170103be7b0fc531b21a40a7cbd
