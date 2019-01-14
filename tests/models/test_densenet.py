@@ -19,7 +19,7 @@ import pytest
 import numpy as np
 import keras
 from keras_retinanet import losses
-from keras_retinanet.models.densenet import densenet_retinanet
+from keras_retinanet.models.densenet import DenseNetBackbone
 
 parameters = ['densenet121']
 
@@ -32,11 +32,12 @@ def test_backbone(backbone):
     num_classes = 10
 
     inputs = np.zeros((1, 200, 400, 3), dtype=np.float32)
-    targets = [np.zeros((1, 14814, 5), dtype=np.float32), np.zeros((1, 14814, num_classes))]
+    targets = [np.zeros((1, 14814, 5), dtype=np.float32), np.zeros((1, 14814, num_classes + 1))]
 
     inp = keras.layers.Input(inputs[0].shape)
 
-    model = densenet_retinanet(num_classes=num_classes, backbone='{}'.format(backbone), inputs=inp)
+    densenet_backbone = DenseNetBackbone(backbone)
+    model = densenet_backbone.retinanet(num_classes=num_classes, inputs=inp)
     model.summary()
 
     # compile model

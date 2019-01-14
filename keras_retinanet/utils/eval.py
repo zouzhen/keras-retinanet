@@ -14,16 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from __future__ import print_function
-
 from .anchors import compute_overlap
 from .visualization import draw_detections, draw_annotations
 
+import keras
 import numpy as np
 import os
 
 import cv2
-import pickle
+import progressbar
+assert(callable(progressbar.progressbar)), "Using wrong progressbar module, install 'progressbar2' instead."
 
 
 def _compute_ap(recall, precision):
@@ -70,15 +70,18 @@ def _get_detections(generator, model, score_threshold=0.05, max_detections=100, 
     # Returns
         A list of lists containing the detections for each image in the generator.
     """
-    all_detections = [[None for i in range(generator.num_classes())] for j in range(generator.size())]
+    all_detections = [[None for i in range(generator.num_classes()) if generator.has_label(i)] for j in range(generator.size())]
 
-    for i in range(generator.size()):
+    for i in progressbar.progressbar(range(generator.size()), prefix='Running network: '):
         raw_image    = generator.load_image(i)
         image        = generator.preprocess_image(raw_image.copy())
         image, scale = generator.resize_image(image)
 
+        if keras.backend.image_data_format() == 'channels_first':
+            image = image.transpose((2, 0, 1))
+
         # run network
-        boxes, scores, labels = model.predict_on_batch(np.expand_dims(image, axis=0))
+        boxes, scores, labels = model.predict_on_batch(np.expand_dims(image, axis=0))[:3]
 
         # correct boxes for image scale
         boxes /= scale
@@ -106,9 +109,10 @@ def _get_detections(generator, model, score_threshold=0.05, max_detections=100, 
 
         # copy detections to all_detections
         for label in range(generator.num_classes()):
-            all_detections[i][label] = image_detections[image_detections[:, -1] == label, :-1]
+            if not generator.has_label(label):
+                continue
 
-        print('{}/{}'.format(i, generator.size()), end='\r')
+            all_detections[i][label] = image_detections[image_detections[:, -1] == label, :-1]
 
     return all_detections
 
@@ -126,15 +130,16 @@ def _get_annotations(generator):
     """
     all_annotations = [[None for i in range(generator.num_classes())] for j in range(generator.size())]
 
-    for i in range(generator.size()):
+    for i in progressbar.progressbar(range(generator.size()), prefix='Parsing annotations: '):
         # load the annotations
         annotations = generator.load_annotations(i)
 
         # copy detections to all_annotations
         for label in range(generator.num_classes()):
-            all_annotations[i][label] = annotations[annotations[:, 4] == label, :4].copy()
+            if not generator.has_label(label):
+                continue
 
-        print('{}/{}'.format(i, generator.size()), end='\r')
+            all_annotations[i][label] = annotations['bboxes'][annotations['labels'] == label, :].copy()
 
     return all_annotations
 
@@ -171,6 +176,9 @@ def evaluate(
 
     # process detections and annotations
     for label in range(generator.num_classes()):
+        if not generator.has_label(label):
+            continue
+
         false_positives = np.zeros((0,))
         true_positives  = np.zeros((0,))
         scores          = np.zeros((0,))
@@ -204,7 +212,7 @@ def evaluate(
 
         # no annotations -> AP for this class is 0 (is this correct?)
         if num_annotations == 0:
-            average_precisions[label] = 0
+            average_precisions[label] = 0, 0
             continue
 
         # sort by score
@@ -222,6 +230,6 @@ def evaluate(
 
         # compute average precision
         average_precision  = _compute_ap(recall, precision)
-        average_precisions[label] = average_precision
+        average_precisions[label] = average_precision, num_annotations
 
     return average_precisions

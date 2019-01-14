@@ -19,12 +19,12 @@ import pytest
 import numpy as np
 import keras
 from keras_retinanet import losses
-from keras_retinanet.models.mobilenet import allowed_backbones, mobilenet_retinanet
+from keras_retinanet.models.mobilenet import MobileNetBackbone
 
 alphas = ['1.0']
 parameters = []
 
-for backbone in allowed_backbones:
+for backbone in MobileNetBackbone.allowed_backbones:
     for alpha in alphas:
         parameters.append((backbone, alpha))
 
@@ -37,11 +37,12 @@ def test_backbone(backbone, alpha):
     num_classes = 10
 
     inputs = np.zeros((1, 1024, 363, 3), dtype=np.float32)
-    targets = [np.zeros((1, 70776, 5), dtype=np.float32), np.zeros((1, 70776, num_classes))]
+    targets = [np.zeros((1, 68760, 5), dtype=np.float32), np.zeros((1, 68760, num_classes + 1))]
 
     inp = keras.layers.Input(inputs[0].shape)
 
-    training_model = mobilenet_retinanet(num_classes=num_classes, backbone='{}_{}'.format(backbone, format(alpha)), inputs=inp)
+    mobilenet_backbone = MobileNetBackbone(backbone='{}_{}'.format(backbone, format(alpha)))
+    training_model = mobilenet_backbone.retinanet(num_classes=num_classes, inputs=inp)
     training_model.summary()
 
     # compile model
