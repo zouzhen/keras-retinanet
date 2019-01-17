@@ -68,6 +68,7 @@ def _findNode(parent, name, debug_name=None, parse=None):
 
 class PascalVocGenerator(Generator):
     """ Generate data for a Pascal VOC dataset.
+            生成Pascal VOC数据集的数据
 
     See http://host.robots.ox.ac.uk/pascal/VOC/ for more information.
     """
@@ -91,7 +92,8 @@ class PascalVocGenerator(Generator):
         self.data_dir             = data_dir
         self.set_name             = set_name
         self.classes              = classes
-        self.image_names          = [l.strip().split(None, 1)[0] for l in open(os.path.join(data_dir, 'ImageSets', 'Main', set_name + '.txt')).readlines()]
+        self.image_names          = [l.strip() for l in open(os.path.join(data_dir, 'ImageSets', 'Main', set_name + '.txt')).readlines()]
+        # self.image_names          = [l.strip().split(None, 1)[0] for l in open(os.path.join(data_dir, 'ImageSets', 'Main', set_name + '.txt')).readlines()]
         self.image_extension      = image_extension
         self.skip_truncated       = skip_truncated
         self.skip_difficult       = skip_difficult
@@ -141,6 +143,7 @@ class PascalVocGenerator(Generator):
 
     def load_image(self, image_index):
         """ Load an image at the image_index.
+                加载所有图片的索引
         """
         path = os.path.join(self.data_dir, 'JPEGImages', self.image_names[image_index] + self.image_extension)
         return read_image_bgr(path)
@@ -168,6 +171,7 @@ class PascalVocGenerator(Generator):
 
     def __parse_annotations(self, xml_root):
         """ Parse all annotations under the xml_root.
+                解析xml_root下的所有注释
         """
         annotations = {'labels': np.empty((len(xml_root.findall('object')),)), 'bboxes': np.empty((len(xml_root.findall('object')), 4))}
         for i, element in enumerate(xml_root.iter('object')):
@@ -188,6 +192,7 @@ class PascalVocGenerator(Generator):
 
     def load_annotations(self, image_index):
         """ Load annotations for an image_index.
+                加载image_index的注释
         """
         filename = self.image_names[image_index] + '.xml'
         try:

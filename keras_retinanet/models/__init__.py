@@ -4,6 +4,7 @@ import sys
 
 class Backbone(object):
     """ This class stores additional information on backbones.
+            此类存储有关主干的其他信息
     """
     def __init__(self, backbone):
         # a dictionary mapping custom layer names to the correct classes
@@ -48,6 +49,7 @@ class Backbone(object):
 
 def backbone(backbone_name):
     """ Returns a backbone object for the given backbone.
+            返回给定主干的骨干对象
     """
     if 'resnet' in backbone_name:
         from .resnet import ResNetBackbone as b

@@ -23,6 +23,7 @@ import numpy as np
 
 class Anchors(keras.layers.Layer):
     """ Keras layer for generating achors for a given shape.
+            Keras层用于为给定形状生成achors
     """
 
     def __init__(self, size, stride, ratios=None, scales=None, *args, **kwargs):
@@ -95,6 +96,7 @@ class Anchors(keras.layers.Layer):
 
 class UpsampleLike(keras.layers.Layer):
     """ Keras layer for upsampling a Tensor to be the same shape as another Tensor.
+            用于上采样Tensor的Keras层与另一个Tensor的形状相同
     """
 
     def call(self, inputs, **kwargs):

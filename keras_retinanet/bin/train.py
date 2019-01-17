@@ -209,10 +209,11 @@ def create_callbacks(model, training_model, prediction_model, validation_generat
 
 def create_generators(args, preprocess_image):
     """ Create generators for training and validation.
+            创建用于训练和验证的生成器
 
     Args
         args             : parseargs object containing configuration for generators.
-        preprocess_image : Function that preprocesses an image for the network.
+        preprocess_image : Function that preprocesses an image for the network（预处理网络图像的函数）.
     """
     common_args = {
         'batch_size'       : args.batch_size,
@@ -223,6 +224,7 @@ def create_generators(args, preprocess_image):
     }
 
     # create random transform generator for augmenting training data
+    # 创建随机变换生成器以增加训练数据
     if args.random_transform:
         transform_generator = random_transform_generator(
             min_rotation=-0.1,
@@ -425,6 +427,7 @@ def main(args=None):
     args = parse_args(args)
 
     # create object that stores backbone information
+    # 创建存储骨干信息的对象（网络模型，包含基础特征提取网络以及FPN）
     backbone = models.backbone(args.backbone)
 
     # make sure keras is the minimum required version
@@ -440,10 +443,13 @@ def main(args=None):
         args.config = read_config_file(args.config)
 
     # create the generators
+    # 创建生成器(包括训练集和测试集)
     train_generator, validation_generator = create_generators(args, backbone.preprocess_image)
 
     # create the model
+    # 创建模型
     if args.snapshot is not None:
+        # 如果权重文件存在，则从权重文件加载权重
         print('Loading model, this may take a second...')
         model            = models.load_model(args.snapshot, backbone_name=args.backbone)
         training_model   = model

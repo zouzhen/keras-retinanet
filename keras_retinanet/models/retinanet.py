@@ -126,6 +126,7 @@ def default_regression_model(num_values, num_anchors, pyramid_feature_size=256, 
 
 def __create_pyramid_features(C3, C4, C5, feature_size=256):
     """ Creates the FPN layers on top of the backbone features.
+            在主干功能之上创建FPN层
 
     Args
         C3           : Feature stage C3 from the backbone.
@@ -209,6 +210,7 @@ def __build_pyramid(models, features):
 
 def __build_anchors(anchor_parameters, features):
     """ Builds anchors for the shape of the features from FPN.
+            为FPN中的要素形状构建锚点
 
     Args
         anchor_parameters : Parameteres that determine how anchors are generated.
@@ -216,6 +218,7 @@ def __build_anchors(anchor_parameters, features):
 
     Returns
         A tensor containing the anchors for the FPN features.
+                包含FPN特征锚点的张量
 
         The shape is:
         ```
@@ -245,8 +248,10 @@ def retinanet(
     name                    = 'retinanet'
 ):
     """ Construct a RetinaNet model on top of a backbone.
+            在骨干网上构建RetinaNet模型
 
     This model is the minimum model necessary for training (with the unfortunate exception of anchors as output).
+            该模型是训练所需的最小模型（锚点作为输出的不幸例外）
 
     Args
         inputs                  : keras.layers.Input (or list of) for the input to the model.
@@ -293,9 +298,12 @@ def retinanet_bbox(
     **kwargs
 ):
     """ Construct a RetinaNet model on top of a backbone and adds convenience functions to output boxes directly.
+            在骨干网上构建RetinaNet模型，并为直接输出框添加便利函数
 
     This model uses the minimum retinanet model and appends a few layers to compute boxes within the graph.
+            该模型使用最小的视网膜模型，并在图中添加几个层来计算框
     These layers include applying the regression values to the anchors and performing NMS.
+            这些层包括将回归值应用于锚点和执行非最大值抑制
 
     Args
         model                 : RetinaNet model to append bbox layers to. If None, it will create a RetinaNet model using **kwargs.
@@ -307,6 +315,7 @@ def retinanet_bbox(
 
     Returns
         A keras.models.Model which takes an image as input and outputs the detections on the image.
+                将图像作为输入并输出图像上的检测
 
         The order is defined as follows:
         ```
@@ -327,6 +336,7 @@ def retinanet_bbox(
         assert_training_model(model)
 
     # compute the anchors
+    # 计算锚点
     features = [model.get_layer(p_name).output for p_name in ['P3', 'P4', 'P5', 'P6', 'P7']]
     anchors  = __build_anchors(anchor_params, features)
 

@@ -26,9 +26,11 @@ from ..utils.image import preprocess_image
 
 class ResNetBackbone(Backbone):
     """ Describes backbone information and provides utility functions.
+            描述骨干信息并提供实用功能
     """
 
     def __init__(self, backbone):
+        # Backbone子类的函数必须在构造函数中执行父类的构造函数
         super(ResNetBackbone, self).__init__(backbone)
         self.custom_objects.update(keras_resnet.custom_objects)
 
@@ -62,6 +64,7 @@ class ResNetBackbone(Backbone):
 
     def validate(self):
         """ Checks whether the backbone string is correct.
+                检查骨干字符串是否正确
         """
         allowed_backbones = ['resnet50', 'resnet101', 'resnet152']
         backbone = self.backbone.split('_')[0]
@@ -77,6 +80,7 @@ class ResNetBackbone(Backbone):
 
 def resnet_retinanet(num_classes, backbone='resnet50', inputs=None, modifier=None, **kwargs):
     """ Constructs a retinanet model using a resnet backbone.
+            使用resnet主干构建视网膜模型
 
     Args
         num_classes: Number of classes to predict.
