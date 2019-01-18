@@ -84,6 +84,7 @@ def model_with_weights(model, weights, skip_mismatch):
 def create_models(backbone_retinanet, num_classes, weights, multi_gpu=0,
                   freeze_backbone=False, lr=1e-5, config=None):
     """ Creates three models (model, training_model, prediction_model).
+            创建三个模型（模型，训练模型，预测模型）
 
     Args
         backbone_retinanet : A function to call to create a retinanet model with a given backbone.
@@ -136,6 +137,7 @@ def create_models(backbone_retinanet, num_classes, weights, multi_gpu=0,
 
 def create_callbacks(model, training_model, prediction_model, validation_generator, args):
     """ Creates the callbacks to use during training.
+            创建在训练期间使用的回调
 
     Args
         model: The base model.
@@ -475,15 +477,18 @@ def main(args=None):
         )
 
     # print model summary
+    # 打印模型摘要
     print(model.summary())
 
     # this lets the generator compute backbone layer shapes using the actual backbone model
+    # 这使得生成器可以使用实际骨干模型来计算主干层形状
     if 'vgg' in args.backbone or 'densenet' in args.backbone:
         train_generator.compute_shapes = make_shapes_callback(model)
         if validation_generator:
             validation_generator.compute_shapes = train_generator.compute_shapes
 
     # create the callbacks
+    # 创建回调
     callbacks = create_callbacks(
         model,
         training_model,
@@ -493,12 +498,14 @@ def main(args=None):
     )
 
     # Use multiprocessing if workers > 0
+    # 如果 workers > 0 ，使用多进程
     if args.workers > 0:
         use_multiprocessing = True
     else:
         use_multiprocessing = False
 
     # start training
+    # 开始训练
     training_model.fit_generator(
         generator=train_generator,
         steps_per_epoch=args.steps,

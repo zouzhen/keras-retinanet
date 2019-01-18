@@ -341,17 +341,21 @@ def retinanet_bbox(
     anchors  = __build_anchors(anchor_params, features)
 
     # we expect the anchors, regression and classification values as first output
+    # 我们期望锚点，回归和分类值作为第一输出
     regression     = model.outputs[0]
     classification = model.outputs[1]
 
     # "other" can be any additional output from custom submodels, by default this will be []
+    # “other”可以是自定义子模型的任何其他输出，默认情况下这将是[]
     other = model.outputs[2:]
 
     # apply predicted regression to anchors
+    # 将预测回归应用于锚点
     boxes = layers.RegressBoxes(name='boxes')([anchors, regression])
     boxes = layers.ClipBoxes(name='clipped_boxes')([model.inputs[0], boxes])
 
     # filter detections (apply NMS / score threshold / select top-k)
+    # 过滤预测结果（应用非最大值抑制 / 分值阈值 / 选择最好的K个）
     detections = layers.FilterDetections(
         nms                   = nms,
         class_specific_filter = class_specific_filter,
@@ -359,4 +363,5 @@ def retinanet_bbox(
     )([boxes, classification] + other)
 
     # construct the model
+    # 构建模型
     return keras.models.Model(inputs=model.inputs, outputs=detections, name=name)

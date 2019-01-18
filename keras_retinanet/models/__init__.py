@@ -67,6 +67,7 @@ def backbone(backbone_name):
 
 def load_model(filepath, backbone_name='resnet50'):
     """ Loads a retinanet model using the correct custom objects.
+            使用正确的自定义对象加载retinanet模型
 
     Args
         filepath: one of the following:
